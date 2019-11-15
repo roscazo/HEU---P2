@@ -1,6 +1,7 @@
 import constraint
 
 # RESTRICCIONES
+# -----------------------------------------------
 def notEqual(a, b):
 	if a != b:
 		return True
@@ -51,17 +52,17 @@ if __name__ == '__main__':
 	# -------------------------------------------------------------------------	
 
 	# Asignaturas:
-	# 	- Para todas las materias se deben impartir 2 horas semanales
-	# 	- La duración de cada una de las clases es de 1 hora
-	# 	- La materia de Matemáticas debe impartirse en las primeras horas
-	# 	- La materia de Ciencias Sociales debe impartirse en las últimas
+	# -------------------------------------------------------------------------
+	# Para todas las materias se deben impartir 2 horas semanales, excepto Educación Física
+	# La duración de cada una de las clases es de 1 hora
 	problem.addVariables(['CN1','CN2','LC1','LC2','IN1','IN2','EF'], range(1,12))
+	# La materia de Matemáticas debe impartirse en las primeras horas
 	problem.addVariables(['MA1','MA2'], [1, 4, 7, 10])
+	# La materia de Ciencias Sociales debe impartirse en las últimas
 	problem.addVariables(['CS1','CS2'], [3, 6, 9, 11])
 	
 	# Profesores:
-	# 	- Cada profesor debe impartir 2 materias
-	# problem.addVariables(['LU1','LU2', 'LU3', 'LU4','AN1','AN2','AN3','AN4','JU1','JU2','JU3','JU4'], range(1,12))	
+	# Cada profesor debe impartir 2 materias
 	problem.addVariables(['LU1','LU2','AN1','AN2','JU1','JU2'], ['CN','CS','MA','IN','EF','LC'])
 
 	# RESTRICCIONES
@@ -109,13 +110,15 @@ if __name__ == '__main__':
 	problem.addConstraint( lateJU, ('JU2','CS2') )
 
 	# SOLUCIÓN
-	print(problem.getSolutions())
+	# -------------------------------------------------------------------------
+	print(problem.getSolution())
 
 	solutions = problem.getSolutions()
     
-	print("#{0} solutions have been found: ".format (len (solutions)))
+	print("#{0} solutions have been found: ".format (len (solutions)/17))
 
-# 	print("""Ciencias Naturales: {0} and {1}
+# 	print("""
+# Ciencias Naturales: {0} and {1}
 # Ciencias Sociales:  {2} and {3}
 # Matematicas: 		{4} and {5}
 # Ingles:  			{6} and {7}
