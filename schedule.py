@@ -1,4 +1,4 @@
-from constraint import *
+import constraint
 
 # RESTRICCIONES
 def notEqual(a, b):
@@ -9,45 +9,61 @@ def equal(a, b):
 	if a == b:
 		return True
 
-def greater(a, b):
-    if a > b:
-	    return True
+def consecutive(a, b):
+	if b == a + 1:
+		return True
 
-def lower(a, b):
-    if a < b:
-	    return True
-
-def notMA(a, b):
+def onlyMA(a, b):
 	if a == 1 and b > 3:
 		return True
-	elif a == 4 and b < 4 or b > 6:
+	if a == 4 and (b < 4 or b > 6):
 		return True
-	elif a == 7 and b < 7 or b > 9:
+	if a == 7 and (b < 7 or b > 9):
 		return True
-	elif a == 10 and b < 10:
+	if a == 10 and b < 10:
+		return True
+
+def csandef(a, b):
+	if a == 'CS' and b != 'EF':
+		return False
+	else: 
+		return True
+
+def lateJU(a, b):
+	if a == 'CN' and (b == 1 or b == 10):
+		return False
+	if a == 'CS' and (b == 1 or b == 10):
+		return False
+	else:
 		return True
 
 # MAIN
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
 
-	problem = Problem()	
+	problem = constraint.Problem()	
 
 	asignaturas = ['CN1','CN2','LC1','LC2','IN1','IN2','EF','MA1','MA2','CS1','CS2']
-	Profesores  = ['LU1','LU2','AN1','AN2','JU1','JU2']
+	# profesores  = ['LU1','LU2','LU3','LU4','AN1','AN2','AN3','AN4','JU1','JU2','JU3','JU4']
+	profesores = ['LU1','LU2','AN1','AN2','JU1','JU2']
 
-	# VARIABLES
+	# VARIABLES:
 	# -------------------------------------------------------------------------	
-	# Asignaturas
-	# Para todas las materias se deben impartir 2 horas semanales
-	# La duración de cada una de las clases es de 1 hora
+
+	# Asignaturas:
+	# 	- Para todas las materias se deben impartir 2 horas semanales
+	# 	- La duración de cada una de las clases es de 1 hora
+	# 	- La materia de Matemáticas debe impartirse en las primeras horas
+	# 	- La materia de Ciencias Sociales debe impartirse en las últimas
 	problem.addVariables(['CN1','CN2','LC1','LC2','IN1','IN2','EF'], range(1,12))
 	problem.addVariables(['MA1','MA2'], [1, 4, 7, 10])
 	problem.addVariables(['CS1','CS2'], [3, 6, 9, 11])
+	
+	# Profesores:
+	# 	- Cada profesor debe impartir 2 materias
+	# problem.addVariables(['LU1','LU2', 'LU3', 'LU4','AN1','AN2','AN3','AN4','JU1','JU2','JU3','JU4'], range(1,12))	
+	problem.addVariables(['LU1','LU2','AN1','AN2','JU1','JU2'], ['CN','CS','MA','IN','EF','LC'])
 
-	# Profesores
-	# Cada profesor debe impartir 2 materias
-	problem.addVariables(['LU1','LU2','AN1','AN2','JU1','JU2'], range(1,12))	
 	# RESTRICCIONES
 	# -------------------------------------------------------------------------	
 	# Sólo se puede impartir una única materia por hora
@@ -55,9 +71,74 @@ if __name__ == '__main__':
 		for j in asignaturas:
 			if i == j: continue
 			else: problem.addConstraint(notEqual, (i, j))	
+
+	# Las dos horas de Ciencias Naturales deben impartirse de forma consecutiva
+	problem.addConstraint(consecutive, ('CN1', 'CN2'))
+
 	# La materia de Matemáticas no puede impartirse el mismo día que Ciencias de la Naturaleza e Inglés	
-	# Cada profesor debe impartir 2 materias, que son diferentes a las de sus compañeros	
-	# Lucía solo se encargará de Ciencias Sociales, si Andrea se encarga de Educación Física	
-	# Juan no quiere encargarse de Ciencias de la Naturaleza o de Ciencias Sociales, si algunas de sus horas se imparte a primera hora los lunes y jueves	
+	problem.addConstraint(onlyMA, ('MA1', 'CN1'))
+	problem.addConstraint(onlyMA, ('MA1', 'CN2'))
+	problem.addConstraint(onlyMA, ('MA1', 'IN1'))
+	problem.addConstraint(onlyMA, ('MA1', 'IN2'))
+	problem.addConstraint(onlyMA, ('MA2', 'CN1'))
+	problem.addConstraint(onlyMA, ('MA2', 'CN2'))
+	problem.addConstraint(onlyMA, ('MA2', 'IN1'))
+	problem.addConstraint(onlyMA, ('MA2', 'IN2'))
+
+	# Cada profesor debe impartir 2 materias, que son diferentes a las de sus compañeros
+	for i in profesores:
+		for j in profesores:
+			if i == j: continue
+			else: problem.addConstraint(notEqual, (i, j))	
+
+	# Lucía solo se encargará de Ciencias Sociales, si Andrea se encarga de Educación Física
+	problem.addConstraint(csandef, ('LU1', 'AN1'))
+	problem.addConstraint(csandef, ('LU1', 'AN2'))
+	problem.addConstraint(csandef, ('LU2', 'AN1'))
+	problem.addConstraint(csandef, ('LU2', 'AN2'))
+
+	# Juan no quiere encargarse de Ciencias de la Naturaleza o de Ciencias Sociales, si algunas de sus horas se imparte 
+	# a primera hora los lunes y jueves	
+	problem.addConstraint( lateJU, ('JU1','CN1') )
+	problem.addConstraint( lateJU, ('JU1','CN2') )
+	problem.addConstraint( lateJU, ('JU1','CS1') )
+	problem.addConstraint( lateJU, ('JU1','CS2') )
+	problem.addConstraint( lateJU, ('JU2','CN1') )
+	problem.addConstraint( lateJU, ('JU2','CN2') )
+	problem.addConstraint( lateJU, ('JU2','CS1') )
+	problem.addConstraint( lateJU, ('JU2','CS2') )
+
 	# SOLUCIÓN
-	print(problem.getSolution())
+	print(problem.getSolutions())
+
+	solutions = problem.getSolutions()
+    
+	print("#{0} solutions have been found: ".format (len (solutions)))
+
+# 	print("""Ciencias Naturales: {0} and {1}
+# Ciencias Sociales:  {2} and {3}
+# Matematicas: 		{4} and {5}
+# Ingles:  			{6} and {7}
+# Lengua castellana:  {8} and {9}
+# Educacion fisica:   {10}""" .format (solutions['CN1'], solutions['CN2'], solutions['CS1'], solutions['CS2'], 
+# 			 						 solutions['MA1'], solutions['MA2'], solutions['IN1'], solutions['IN2'],
+# 									 solutions['LC1'], solutions['LC2'], solutions['EF']))
+
+# 	print("""
+# Andrea: {0} and {1}
+# Lucia:  {2} and {3}
+# Juan: 	{4} and {5}
+# """ .format (solutions['AN1'], solutions['AN2'], solutions['LU1'], solutions['LU2'], 
+# 			 						 solutions['JU1'], solutions['JU2']))
+
+	# print("""
+	# 		  |  L  |  M  |  X  |  J  |
+	# -----------------------------------
+	# |  9 - 10 |  {8}  |  {6}  |  {5}  | {4}  |
+	# -----------------------------------
+	# | 10 - 11 |  {9}  |  {1}  |  {10}  | {2}  |
+	# -----------------------------------
+	# | 11 - 12 |  {7}  |  {3}  |  {3}  |
+	# -----------------------------""".format (solutions, solutions['CN2'], solutions['CS1'], solutions['CS2'], 
+	# 		 						 solutions['MA1'], solutions['MA2'], solutions['IN1'], solutions['IN2'],
+	# 								 solutions['LC1'], solutions['LC2'], solutions['EF']))
