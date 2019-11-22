@@ -24,7 +24,7 @@ def onlyMA(a, b):
 	if a == 10 and b < 10:
 		return True
 
-def csandef(a, b):
+def csyef(a, b):
 	if a == 'CS' and b != 'EF':
 		return False
 	else: 
@@ -92,11 +92,11 @@ if __name__ == '__main__':
 			if i == j: continue
 			else: problem.addConstraint(notEqual, (i, j))	
 
-	# Lucía solo se encargará de Ciencias Sociales, si Andrea se encarga de Educación Física
-	problem.addConstraint(csandef, ('LU1', 'AN1'))
-	problem.addConstraint(csandef, ('LU1', 'AN2'))
-	problem.addConstraint(csandef, ('LU2', 'AN1'))
-	problem.addConstraint(csandef, ('LU2', 'AN2'))
+	# Lucía solo se encargará de Ciencias Sociales, si yrea se encarga de Educación Física
+	problem.addConstraint(csyef, ('LU1', 'AN1'))
+	problem.addConstraint(csyef, ('LU1', 'AN2'))
+	problem.addConstraint(csyef, ('LU2', 'AN1'))
+	problem.addConstraint(csyef, ('LU2', 'AN2'))
 
 	# Juan no quiere encargarse de Ciencias de la Naturaleza o de Ciencias Sociales, si algunas de sus horas se imparte 
 	# a primera hora los lunes y jueves	
@@ -111,28 +111,28 @@ if __name__ == '__main__':
 
 	# SOLUCIÓN
 	# -------------------------------------------------------------------------
-	print(problem.getSolution())
+	# print(problem.getSolution())
 
-	solutions = problem.getSolutions()
+	solutions = problem.getSolution()
     
-	print("#{0} solutions have been found: ".format (len (solutions)/17))
+	# print("#{0} solutions have been found: ".format (len (solutions)/17))
 
-# 	print("""
-# Ciencias Naturales: {0} and {1}
-# Ciencias Sociales:  {2} and {3}
-# Matematicas: 		{4} and {5}
-# Ingles:  			{6} and {7}
-# Lengua castellana:  {8} and {9}
-# Educacion fisica:   {10}""" .format (solutions['CN1'], solutions['CN2'], solutions['CS1'], solutions['CS2'], 
-# 			 						 solutions['MA1'], solutions['MA2'], solutions['IN1'], solutions['IN2'],
-# 									 solutions['LC1'], solutions['LC2'], solutions['EF']))
+	print("""
+Ciencias Naturales: {0} y {1}
+Ciencias Sociales:  {2} y {3}
+Matematicas: 		{4} y {5}
+Ingles:  			{6} y {7}
+Lengua castellana:  {8} y {9}
+Educacion fisica:   {10}""" .format (solutions['CN1'], solutions['CN2'], solutions['CS1'], solutions['CS2'], 
+			 						 solutions['MA1'], solutions['MA2'], solutions['IN1'], solutions['IN2'],
+									 solutions['LC1'], solutions['LC2'], solutions['EF']))
 
-# 	print("""
-# Andrea: {0} and {1}
-# Lucia:  {2} and {3}
-# Juan: 	{4} and {5}
-# """ .format (solutions['AN1'], solutions['AN2'], solutions['LU1'], solutions['LU2'], 
-# 			 						 solutions['JU1'], solutions['JU2']))
+	print("""
+Andrea: {0} y {1}
+Lucia:  {2} y {3}
+Juan: 	{4} y {5}
+""" .format (solutions['AN1'], solutions['AN2'], solutions['LU1'], solutions['LU2'], 
+			 						 solutions['JU1'], solutions['JU2']))
 
 	# print("""
 	# 		  |  L  |  M  |  X  |  J  |
