@@ -5,39 +5,32 @@
 #include <stdexcept>
 #include <fstream>
 
+#include "state.h"
+
 using namespace std;
-
-class state
-{
-private:
-    char parada;
-    char colegio;
-    vector<int> ninos;
-
-public:
-    state(/* args */);
-    ~state();
-};
-
-state::state(/* args */)
-{
-}
-
 
 class node
 {
-private:
-    // state state;
-    int coste;
-    int heu;
-
-    void sucesores();
-
 public:
-    node(/* args */);
+    node(node p, state s, int g, int h);
+    node();
     ~node();
-};
 
-node::node(/* args */)
-{
-}
+    void sucesores(vector<node> &open);
+    int equal(node n);
+
+    void setCost(int g);
+    int getCost(){ return g; };
+
+    void setHeu(int h);
+    int getHeu(){ return h; };
+
+private:
+    //node node_parent;
+    state s;
+
+    int g;
+    int h;
+
+    
+};
