@@ -16,6 +16,8 @@ class parada
     public:
         parada(string id);
         ~parada();
+
+        string getParada(){ return id; };
 };
 
 parada::parada(string i)
@@ -38,6 +40,7 @@ class colegio : public parada
             col = c; 
         }
 
+        string getName(){ return col; }
 };
 
 class child : public parada
@@ -52,4 +55,7 @@ class child : public parada
             cole = c;
             estado = 0;
         }
+
+        string getColegio(){ return cole; }
+
 };

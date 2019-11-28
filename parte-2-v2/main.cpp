@@ -7,7 +7,8 @@ vector<child> children;
 
 void print_coso()
 {
-    cout << "SIZE : " << conexiones.size() << endl;
+    cout << "------------- PARADAS -------------" << endl;
+    // cout << "SIZE : " << conexiones.size() << endl;
     for(int i = 0; i < conexiones.size(); i++)
     {
         cout << "P" << i+1 << endl;
@@ -17,6 +18,18 @@ void print_coso()
         }
     }
 
+    cout << "\n------------- COLEGIOS -------------" << endl;
+    for(int i = 0; i < colegios.size(); i++)
+    {
+        cout << "Colegio " << colegios[i].getName() << " en " << colegios[i].getParada() << endl;
+    }
+
+    cout << "\n------------- NIÑOS -------------" << endl;
+    for(int i = 0; i < children.size(); i++)
+    {
+        cout << "Niño " << i << " en " << children[i].getParada() << " hacia "
+        << children[i].getColegio() << endl;
+    }
 }
 
 int num_paradas(string str)
@@ -42,10 +55,10 @@ void matrix_conexiones(string str, int size)
 
     for (auto x : str) 
     { 
-        cout << x << endl;
+        // cout << x << endl;
         if (x == ' ')
         { 
-            // 1ª COL --> ID de la parada
+            // ID de la parada
             if(i == -1){ i = 0; word = ""; continue; } 
             // Celda con --
             else if(word == "--") row.push_back(1000);
@@ -56,12 +69,77 @@ void matrix_conexiones(string str, int size)
             word = "";
         } 
         else word = word + x;
-        cout << word << endl;
+        // cout << word << endl;
     }
     if(word == "--") row.push_back(1000);
     else row.push_back(stoi(word));
 
     conexiones.push_back(row);
+}
+
+void line_cole(string str)
+{
+    string word = "";
+    string cole, par;
+
+    for (auto x : str) 
+    {
+        if(x == ':') cole = word;
+
+        else if(x == ' ') word = "";
+
+        else if(x == ';')
+        {
+            par = word;
+            colegio aux(par, cole);
+            colegios.push_back(aux);
+        }
+        else word = word + x; 
+    }
+    par = word;
+    colegio aux(par, cole);
+    colegios.push_back(aux);
+}
+
+void line_children(string str)
+{
+    string word = "";
+    string p, c;
+    int num_ninos, esp = 0;
+
+    for (auto x : str)
+    {
+        if(x == ':')
+        {
+            p = word;
+            esp = 0;
+        } 
+        else if(x == ' ')
+        {
+            if(esp != 0) num_ninos = (int)word[0] - 48;
+
+            else ++esp;
+
+            word = "";
+        } 
+        else if(x == ',' || x == ';')
+        {
+            c = word;
+            for(int i = 0; i < num_ninos; ++i)
+            {
+                child aux(p, c);
+                children.push_back(aux);
+            }
+            esp = 0;
+        }
+        else word = word + x;
+    }
+    c = word;
+    for(int i = 0; i < num_ninos; ++i)
+    {
+        child aux(p, c);
+        children.push_back(aux);
+    }
 }
 
 void fill_graph()
@@ -84,18 +162,19 @@ void fill_graph()
     cout << "Num_paradas: " << num_p << endl; 
     
     conexiones.reserve(num_p);
+
     // Recorre el fichero línea por línea
     while(getline(problema, str))
     {
-        // if(control == num_p)
-        //     num_col = line_cole(str);
-        // else if(control == num_p + 1)
-        //     line_kids(str);
+        if(control == num_p)
+            line_cole(str);
+        else if(control == num_p + 1)
+            line_children(str);
         // else if(control == num_p +2)
         //     line_capacity(str);
-        // else
+        else
             matrix_conexiones(str, num_p);
-        // ++control;
+        ++control;
     } 
     
     problema.close();
