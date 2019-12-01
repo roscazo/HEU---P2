@@ -1,187 +1,81 @@
+#include "headers/node.h"
 
-#include "parada.h"
+node initial_node;
+node final_node;
 
 vector<colegio> colegios;
 vector<vector<int>> conexiones;
 vector<child> children;
 
-void print_coso()
+vector<node> open;
+vector<node> closed;
+int done;
+
+bool sort_function(node i, node j)
 {
-    cout << "------------- PARADAS -------------" << endl;
-    // cout << "SIZE : " << conexiones.size() << endl;
-    for(int i = 0; i < conexiones.size(); i++)
-    {
-        cout << "P" << i+1 << endl;
-        for(int j = 0; j < conexiones[i].size(); j++)
-        {
-            cout << "Conectado con " << j+1 << " en " << conexiones[i][j] << endl;
-        }
-    }
-
-    cout << "\n------------- COLEGIOS -------------" << endl;
-    for(int i = 0; i < colegios.size(); i++)
-    {
-        cout << "Colegio " << colegios[i].getName() << " en " << colegios[i].getParada() << endl;
-    }
-
-    cout << "\n------------- NIÑOS -------------" << endl;
-    for(int i = 0; i < children.size(); i++)
-    {
-        cout << "Niño " << i << " en " << children[i].getParada() << " hacia "
-        << children[i].getColegio() << endl;
-    }
+    return (i.getF() > j.getF());
 }
 
-int num_paradas(string str)
+void sucesores(node padre)
 {
-    int esp = 0;
-    for (auto x : str) 
+    int pos = padre.getPos()[1] - 49;
+
+    for(int i = 0; i < conexiones[pos].size(); ++i)
     {
-        if(x == ' ' && esp != 0) ++esp;
-        else if(x != ' ' && esp == 0) ++esp;
-        else continue;
-    }
-    // esp -= 2;
-    return esp;
-}
-
-void matrix_conexiones(string str, int size)
-{
-    string word = "";
-    int i = -1;
-    vector<int> row;
-
-    row.reserve(size);
-
-    for (auto x : str) 
-    { 
-        // cout << x << endl;
-        if (x == ' ')
-        { 
-            // ID de la parada
-            if(i == -1){ i = 0; word = ""; continue; } 
-            // Celda con --
-            else if(word == "--") row.push_back(1000);
-            // Celda con número
-            else row.push_back(stoi(word));
-
-            ++i;
-            word = "";
-        } 
-        else word = word + x;
-        // cout << word << endl;
-    }
-    if(word == "--") row.push_back(1000);
-    else row.push_back(stoi(word));
-
-    conexiones.push_back(row);
-}
-
-void line_cole(string str)
-{
-    string word = "";
-    string cole, par;
-
-    for (auto x : str) 
-    {
-        if(x == ':') cole = word;
-
-        else if(x == ' ') word = "";
-
-        else if(x == ';')
-        {
-            par = word;
-            colegio aux(par, cole);
-            colegios.push_back(aux);
-        }
-        else word = word + x; 
-    }
-    par = word;
-    colegio aux(par, cole);
-    colegios.push_back(aux);
-}
-
-void line_children(string str)
-{
-    string word = "";
-    string p, c;
-    int num_ninos, esp = 0;
-
-    for (auto x : str)
-    {
-        if(x == ':')
-        {
-            p = word;
-            esp = 0;
-        } 
-        else if(x == ' ')
-        {
-            if(esp != 0) num_ninos = (int)word[0] - 48;
-
-            else ++esp;
-
-            word = "";
-        } 
-        else if(x == ',' || x == ';')
-        {
-            c = word;
-            for(int i = 0; i < num_ninos; ++i)
-            {
-                child aux(p, c);
-                children.push_back(aux);
-            }
-            esp = 0;
-        }
-        else word = word + x;
-    }
-    c = word;
-    for(int i = 0; i < num_ninos; ++i)
-    {
-        child aux(p, c);
-        children.push_back(aux);
-    }
-}
-
-void fill_graph()
-{
-    ifstream problema;
-    string str;
-    
-    int control = 0;
-    int num_col;
-
-    problema.open("problema.prob");
-    if (!problema) 
-    {
-        cerr << "Unable to open file datafile.txt";
-        exit(1);   // call system to stop
-    }
-    // Busca el número de paradas
-    getline(problema, str); 
-    int num_p = num_paradas(str);
-    cout << "Num_paradas: " << num_p << endl; 
-    
-    conexiones.reserve(num_p);
-
-    // Recorre el fichero línea por línea
-    while(getline(problema, str))
-    {
-        if(control == num_p)
-            line_cole(str);
-        else if(control == num_p + 1)
-            line_children(str);
-        // else if(control == num_p +2)
-        //     line_capacity(str);
+        cout << "POS " << conexiones[pos][i] << endl;
+        if(conexiones[pos][i] == 1000) continue;
         else
-            matrix_conexiones(str, num_p);
-        ++control;
-    } 
+        {
+            char word = i+49;
+            string p = "P";
+
+            node aux((p+word), conexiones[pos][i]);
+            open.push_back(aux);
+        }
+    }
+    sort(open.begin(), open.end(), sort_function);
+    open.pop_back();
+}
+
+void a_star()
+{
+    node check;
+
+    open.push_back(initial_node);
+    done = 0;
+
+    sucesores(initial_node);
+
+    // while (!open.empty() || done == 1)
+    // {
+    //     check = open.back();
+    //     for(int i = 0; i < closed.size(); ++i)
+    //     {
+    //         if(check == closed.at(i))
+    //     }
+    //     open.pop_back();
+    // }
     
-    problema.close();
+    cout << "\nLA LIADITA" << endl;
+    for(int i = 0; i < open.size(); ++i){
+        cout << "NODO " << open[i].getPos() << endl;
+        cout << "COSTE " << open[i].getF() << "\n" << endl;
+    }
+    
+    
 }
 
 int main()
 {
-    fill_graph();
-    print_coso();
+    mapa map;
+    map.fill_graph();
+
+    initial_node.setPos(map.getInitial());
+    initial_node.setCost(0);
+
+    colegios = map.getColegios();
+    conexiones = map.getConexiones();
+    children = map.getChildren();
+
+    a_star();
 }
