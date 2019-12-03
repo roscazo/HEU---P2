@@ -47,7 +47,10 @@ class child : public parada
             estado = 0;
         }
 
+        string setEstado(int e){ estado = e; }
+
         string getColegio(){ return cole; }
+        int getEstado(){ return estado; }
 
 };
 

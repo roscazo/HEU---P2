@@ -1,12 +1,4 @@
-#include <string>
-#include <vector>
-#include <iostream>
-#include <stdexcept>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-
-#include "mapa.h"
+#include "state.h"
 
 using namespace std;
 
@@ -14,27 +6,31 @@ class node
 {
 private:
     // node parent;
-    string pos;
+    state estado;
     int g;
     int h;
 
+    // void subir();
+    // void bajar();
+    // void mover();
+
 public:
-    node(string p, int coste);
+    node(state es, int coste);
     node() = default;
 
-    void setPos(string p){ pos = p; };
+    void setEstado(state e){ estado = e; };
     void setCost(int c){ g = c; };
     void setHeu(int heu){ h = heu; };
 
     int getF();
-    string getPos(){ return pos; };
+    state getState(){ return estado; };
 
     ~node();
 };
 
-node::node(string p, int coste)
+node::node(state es, int coste)
 {
-    pos = p;
+    estado = es;
     g = coste;
     h = 0;
 }
