@@ -25,6 +25,7 @@ public:
     int getF();
     int getCost(){ return g; };
     state getState(){ return estado; };
+    node getPadre(){ return *padre; };
 
     ~node();
 };

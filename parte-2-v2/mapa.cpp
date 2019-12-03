@@ -12,23 +12,23 @@ void mapa::print_coso()
 {
     cout << "------------- PARADAS -------------" << endl;
     // cout << "SIZE : " << conexiones.size() << endl;
-    for(int i = 0; i < conexiones.size(); i++)
+    for(size_t i = 0; i < conexiones.size(); i++)
     {
         cout << "P" << i+1 << endl;
-        for(int j = 0; j < conexiones[i].size(); j++)
+        for(size_t j = 0; j < conexiones[i].size(); j++)
         {
             cout << "Conectado con P" << j+1 << " en " << conexiones[i][j] << endl;
         }
     }
 
     cout << "\n------------- COLEGIOS -------------" << endl;
-    for(int i = 0; i < colegios.size(); i++)
+    for(size_t i = 0; i < colegios.size(); i++)
     {
         cout << "Colegio " << colegios[i].getName() << " en " << colegios[i].getParada() << endl;
     }
 
     cout << "\n------------- NIÑOS -------------" << endl;
-    for(int i = 0; i < children.size(); i++)
+    for(size_t i = 0; i < children.size(); i++)
     {
         cout << "Niño " << i << " en " << children[i].getParada() << " hacia "
         << children[i].getColegio() << endl;
@@ -179,7 +179,6 @@ void mapa::fill_graph()
     string str;
     
     int control = 0;
-    int num_col;
 
     problema.open("problema.prob");
     if (!problema) 
