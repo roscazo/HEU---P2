@@ -5,7 +5,7 @@ using namespace std;
 class node
 {
 private:
-    // node parent;
+    node* padre;
     state estado;
     int g;
     int h;
@@ -15,24 +15,30 @@ private:
     // void mover();
 
 public:
-    node(state es, int coste);
-    node() = default;
+    node(node* p, state es, int coste);
+    node();
 
-    void setEstado(state e){ estado = e; };
+    void setState(state e){ estado = e; };
     void setCost(int c){ g = c; };
     void setHeu(int heu){ h = heu; };
 
     int getF();
+    int getCost(){ return g; };
     state getState(){ return estado; };
 
     ~node();
 };
 
-node::node(state es, int coste)
+node::node(node *p, state es, int coste)
 {
+    padre = p;
     estado = es;
     g = coste;
     h = 0;
+}
+
+node::node()
+{
 }
 
 node::~node()

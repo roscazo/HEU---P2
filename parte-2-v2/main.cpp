@@ -5,6 +5,7 @@ node final_node;
 
 vector<colegio> colegios;
 vector<vector<int>> conexiones;
+int capacidad;
 
 vector<node> open;
 vector<node> closed;
@@ -13,25 +14,6 @@ int done;
 bool sort_function(node i, node j)
 {
     return (i.getF() > j.getF());
-}
-
-void sucesores(node padre)
-{
-    int pos = padre.getPos()[1] - 49;
-
-    for(int i = 0; i < conexiones[pos].size(); ++i)
-    {
-        //cout << "POS " << conexiones[pos][i] << endl;
-        if(conexiones[pos][i] == 1000) continue;
-        else
-        {
-            char word = i+49;
-            string p = "P";
-
-            // node aux((p+word), conexiones[pos][i]);
-            // open.push_back(aux);
-        }
-    }
 }
 
 string check_colegio(string p)
@@ -45,29 +27,74 @@ string check_colegio(string p)
     return NULL;
 }
 
-void subir(node n)
+void subir(node padre)
 {
-    state p = n.getState();
-    for (vector<child>::iterator it = p.getChildren().begin(); it != p.getChildren().end(); ++it)
+    state s = padre.getState();
+
+    vector<child> aux_c = s.getChildren();
+    string aux_p = s.getParada();
+    int libre = s.getPassengers();
+
+    for (vector<child>::iterator it = aux_c.begin(); it != aux_c.end(); ++it)
     {
-        if( ((*it).getParada() == p.getParada()) && ((*it).getEstado() == 0) && (p.getPassengers() > 0))
+        if( ((*it).getParada() == aux_p) && ((*it).getState() == 0) && (libre > 0))
         {
-            (*it).setEstado(1);
-            p.subir_pasajero(1);
+            (*it).setState(1);
+            libre -= 1;
+            state aux_s(aux_p, aux_c, libre);
+            node aux_n(&padre, aux_s, padre.getCost());
+            open.push_back(aux_n);
         }    
     }
 }
 
-void bajar(node n)
+void bajar(node padre)
 {
-    string p = n.getPos();
+    state s = padre.getState();
+
+    vector<child> aux_c = s.getChildren();
+    string aux_p = s.getParada();
+    int libre = s.getPassengers();
+
     for (vector<child>::iterator it = children.begin(); it != children.end(); ++it)
     {
-        if( ((*it).getParada() == p) && ((*it).getEstado() == 1) && ((*it).getColegio() == check_colegio(p)) )
+        if( ((*it).getParada() == aux_p) && ((*it).getState() == 1) && ((*it).getColegio() == check_colegio(aux_p)) )
         {
-            (*it).setEstado(2);
+            (*it).setState(2);
+            libre += 1;
+            state aux_s(aux_p, aux_c, libre);
+            node aux_n(&padre, aux_s, padre.getCost());
+            open.push_back(aux_n);
         }    
     }
+}
+
+void mover(node padre)
+{
+    int aux_s = padre.getState();
+    int pos = aux_s.getParada()[1] - 49;
+
+    for (vector<int>::iterator it = conexiones[pos].begin(); it != conexiones[pos].end(); ++it)
+    {
+        if(*it == 1000) continue;
+        else
+        {
+            char word = (*it)+49;
+            string p = "P";
+            int cost = (*it) + padre.getCost();
+
+            state aux_s((p+word), aux_s.getChildren(), aux_s.getPassengers());
+            node aux_n(&padre, aux_s, cost);
+            open.push_back(aux_n);
+        }
+    }
+}
+
+void sucesores(node padre)
+{
+    mover(padre);
+    subir(padre);
+    bajar(padre);
 }
 
 void a_star()
@@ -77,11 +104,11 @@ void a_star()
     open.push_back(initial_node);
     done = 0;
 
-    for (size_t i = 0; i < 3; i++)
-    // while (!open.empty() || done == 0)
-    {
+    // for (size_t i = 0; i < 3; i++)
+    // // while (!open.empty() || done == 0)
+    // {
         parent = open.back();
-        cout << "PATER " << parent.getPos() << endl;
+        cout << "PATER " << parent.getState().getParada() << endl;
         open.pop_back();
         sucesores(parent);
         sort(open.begin(), open.end(), sort_function);
@@ -90,13 +117,13 @@ void a_star()
     //         if(check == closed.at(i))
     //     }
     //     open.pop_back();
-    }
+    // }
     
-    cout << "\nLA LIADITA" << endl;
-    for(int i = 0; i < open.size(); ++i){
-        cout << "NODO " << open[i].getPos() << endl;
-        cout << "COSTE " << open[i].getF() << "\n" << endl;
-    }
+    // cout << "\nLA LIADITA" << endl;
+    // for(int i = 0; i < open.size(); ++i){
+    //     cout << "NODO " << open[i].getParada() << endl;
+    //     cout << "COSTE " << open[i].getF() << "\n" << endl;
+    // }
     
     
 }
@@ -107,11 +134,12 @@ int main()
     map.fill_graph();
     state initial_state(map.getInitial(), map.getChildren(), map.getCapacity());
 
-    initial_node.setEstado(initial_state);
+    initial_node.setState(initial_state);
     initial_node.setCost(0);
 
     colegios = map.getColegios();
     conexiones = map.getConexiones();
+    capacidad = map.getCapacity();
 
     a_star();
 }

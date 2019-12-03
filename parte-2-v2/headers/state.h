@@ -9,10 +9,11 @@ private:
 
 public:
     state(string p, vector<child> c, int a);
+    state();
     ~state();
 
-    void subir_pasajero(int i);
-    void bajar_pasajero(int i);
+    void setPosition(string p){ position = p; };
+    void setChildren(vector<child> c){ children = c; };
 
     string getParada(){ return position; };
     vector<child> getChildren(){ return children; };
@@ -26,14 +27,8 @@ state::state(string p, vector<child> c, int a)
     available = a;
 }
 
-void state::subir_pasajero(int i)
+state::state()
 {
-    available -= 1;
-}
-
-void state::bajar_pasajero(int i)
-{
-    available += 1;
 }
 
 state::~state()
