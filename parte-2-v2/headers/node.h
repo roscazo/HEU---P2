@@ -10,6 +10,7 @@ private:
     int g;
     int h;
 
+    int heuristica();
     // void subir();
     // void bajar();
     // void mover();
@@ -35,7 +36,7 @@ node::node(node *p, state es, int coste)
     padre = p;
     estado = es;
     g = coste;
-    h = 0;
+    h = heuristica();
 }
 
 node::node()
@@ -49,4 +50,19 @@ node::~node()
 int node::getF()
 {
     return (g + h);
+}
+
+int node::heuristica()
+{
+    int heu = 2*(estado.getChildren().size());
+    int sum = 0;
+
+    for (vector<child>::iterator ch = estado.getChildren().begin(); ch != estado.getChildren().end(); ++ch)
+        sum += (*ch).getEstado();
+
+    // if(sum < heu)
+    //     heu -= sum;
+    heu = heu - sum;
+
+    return heu;
 }

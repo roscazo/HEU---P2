@@ -35,6 +35,32 @@ bool done(node n)
     return check;
 }
 
+bool check_open(node n)
+{
+    state new_s = n.getState();
+    bool check;
+
+    for (vector<node>::iterator it = open.begin(); it != open.end(); ++it)
+    {
+        if(check == true) return true;
+        
+        state aux_s = (*it).getState();
+
+        if(new_s.getParada() == aux_s.getParada())
+        {
+            for(size_t i = 0; i < new_s.getChildren().size(); ++i)
+            {
+                if(new_s.getChildren()[i].getEstado() == aux_s.getChildren()[i].getEstado())
+                    check = true;
+                else 
+                    return false;
+            }
+        }
+        else check = false;
+    }
+    return check;
+}
+
 bool check_closed(node n)
 {
     state new_s = n.getState();
@@ -91,17 +117,19 @@ void subir(node padre)
     {
         if( ((*it).getParada() == aux_p) && ((*it).getEstado() == 0) && (libre > 0))
         {
-            ++control;
-
             (*it).setEstado(1);
             libre -= 1;
 
-            state aux_s(aux_p, aux_c, libre);
-            node aux_n(&padre, aux_s, padre.getCost());
+            state new_s(aux_p, aux_c, libre);
+            node new_n(&padre, new_s, padre.getCost());
 
             if(control > 0) open.pop_back();
 
-            open.push_back(aux_n);
+            if(!check_closed(new_n) && !check_open(new_n))
+            {
+                ++control;
+                open.push_back(new_n);
+            }
         }    
     }
 }
@@ -125,12 +153,16 @@ void bajar(node padre)
             (*it).setEstado(2);
             libre += 1;
 
-            state aux_s(aux_p, aux_c, libre);
-            node aux_n(&padre, aux_s, padre.getCost());
+            state new_s(aux_p, aux_c, libre);
+            node new_n(&padre, new_s, padre.getCost());
 
             if(control > 0) open.pop_back();
 
-            open.push_back(aux_n);
+            if(!check_closed(new_n) && !check_open(new_n))
+            {
+                ++control;
+                open.push_back(new_n);
+            }
         }    
     }
 }
@@ -153,7 +185,8 @@ void mover(node padre)
             state new_s((p+word), aux_s.getChildren(), aux_s.getPassengers());
             node new_n(&padre, new_s, cost);
 
-            open.push_back(new_n);
+            if(!check_closed(new_n) && !check_open(new_n))
+                open.push_back(new_n);
         }
     }
 }
@@ -167,64 +200,69 @@ void sucesores(node padre)
 
 void a_star()
 {
-    int i = 0;
+    int j = 0;
     node parent;
 
     open.push_back(initial_node);
 
-    while (!done(open.back()))
+    for(int i = 0; i < 50; ++i)
+    //while (!done(open.back()))
     {
         parent = open.back();
         //cout << "PATER " << parent.getState().getParada() << endl;
         open.pop_back();
         //cout << "CHECK " << check_closed(parent) << endl;
-        if(!check_closed(parent))
-        {
-            sucesores(parent);
-            closed.push_back(parent);   
-        }
+        // if(!check_closed(parent))
+        // {
+        //     sucesores(parent);
+        //     closed.push_back(parent);   
+        // }
+        sucesores(parent);
+        closed.push_back(parent);
         sort(open.begin(), open.end(), sort_function);
-        ++i;
+        ++j;
     }
     
-    // cout << "\n-----OPEN-----" << endl;
-    // for (vector<node>::iterator it = open.begin(); it != open.end(); ++it)
-    // {
-    //     state e = (*it).getState();
-    //     //node p = (*it).getPadre();
-    //     cout << "NODO " << e.getParada() << endl;
-    //     //cout << "PADRE " << p.getState().getParada() << endl;
-    //     cout << "COSTE " << (*it).getF() << endl;
-    //     cout << "NOÑOH ";
+    cout << "\n-----OPEN-----" << endl;
+    for (vector<node>::iterator it = open.begin(); it != open.end(); ++it)
+    {
+        state e = (*it).getState();
+        //node p = (*it).getPadre();
+        cout << "NODO " << e.getParada() << endl;
+        //cout << "PADRE " << p.getState().getParada() << endl;
+        cout << "G " << (*it).getCost() << endl;
+        cout << "COSTE " << (*it).getF() << endl;
+        cout << "NOÑOH ";
 
-    //     for (vector<child>::iterator ch = e.getChildren().begin(); ch != e.getChildren().end(); ++ch)
-    //     {
-    //         cout << (*ch).getEstado() << " ";
-    //     }
-    //     cout << "\n" << endl;
+        for (vector<child>::iterator ch = e.getChildren().begin(); ch != e.getChildren().end(); ++ch)
+        {
+            cout << (*ch).getEstado() << " ";
+        }
+        cout << "\n" << endl;
 
-    // }
+    }
 
-    // cout << "\n-----CLOSED-----" << endl;
-    // for (vector<node>::iterator it = closed.begin(); it != closed.end(); ++it)
-    // {
-    //     state e = (*it).getState();
-    //     //node p = (*it).getPadre();
-    //     cout << "NODO " << e.getParada() << endl;
-    //     //cout << "PADRE " << p.getState().getParada() << endl;
-    //     cout << "COSTE " << (*it).getF() << endl;
-    //     cout << "NOÑOH ";
+    cout << "\n-----CLOSED-----" << endl;
+    for (vector<node>::iterator it = closed.begin(); it != closed.end(); ++it)
+    {
+        state e = (*it).getState();
+        //node p = (*it).getPadre();
+        cout << "NODO " << e.getParada() << endl;
+        //cout << "PADRE " << p.getState().getParada() << endl;
+        cout << "G " << (*it).getCost() << endl;
+        cout << "COSTE " << (*it).getF() << endl;
+        cout << "NOÑOH ";
 
-    //     for (vector<child>::iterator ch = e.getChildren().begin(); ch != e.getChildren().end(); ++ch)
-    //     {
-    //         cout << (*ch).getEstado() << " ";
-    //     }
-    //     cout << "\n" << endl;
+        for (vector<child>::iterator ch = e.getChildren().begin(); ch != e.getChildren().end(); ++ch)
+        {
+            cout << (*ch).getEstado() << " ";
+        }
+        cout << "\n" << endl;
 
-    // }
+    }
     
     cout << "\n-----ITERATIONS-----" << endl;
-    cout << i << endl;
+    cout << j << endl;
     
 }
 
