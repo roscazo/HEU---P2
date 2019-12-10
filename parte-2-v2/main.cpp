@@ -1,7 +1,7 @@
-#include "headers/node.h"
+#include "headers/node.hpp"
 
 node initial_node;
-node final_node;
+// node final_node;
 
 vector<colegio> colegios;
 vector<vector<int>> conexiones;
@@ -12,45 +12,44 @@ vector<node> closed;
 
 bool sort_function(node i, node j)
 {
-    return (i.getF() > j.getF());
+    return (i.get_f() > j.get_f());
 }
 
 bool done(node n)
 {
-    state new_s = n.getState();
+    state new_s = n.get_state();
 
-    bool check;
+    bool check = false;
 
-    if(new_s.getParada() == "P1")
-    {
-        for(size_t i = 0; i < new_s.getChildren().size(); ++i)
+    //if(new_s.get_parada() == "P1")
+    //{
+        for(size_t i = 0; i < new_s.get_children().size(); ++i)
         {
-            if(new_s.getChildren()[i].getEstado() == 2)
+            if(new_s.get_children()[i].get_estado() == 2)
                 check = true;
             else 
                 return false;
         }
-    }
-    else return false;
+    //}
+    //else return false;
     return check;
 }
 
-bool check_open(node n)
+bool check_open(state &new_s)
 {
-    state new_s = n.getState();
-    bool check;
+    bool check = false;
 
     for (vector<node>::iterator it = open.begin(); it != open.end(); ++it)
     {
         if(check == true) return true;
         
-        state aux_s = (*it).getState();
+        state aux_s = (*it).get_state();
 
-        if(new_s.getParada() == aux_s.getParada())
+        if(new_s.get_parada() == aux_s.get_parada())
         {
-            for(size_t i = 0; i < new_s.getChildren().size(); ++i)
+            for(size_t i = 0; i < new_s.get_children().size(); ++i)
             {
-                if(new_s.getChildren()[i].getEstado() == aux_s.getChildren()[i].getEstado())
+                if(new_s.get_children()[i].get_estado() == aux_s.get_children()[i].get_estado())
                     check = true;
                 else 
                     return false;
@@ -61,22 +60,21 @@ bool check_open(node n)
     return check;
 }
 
-bool check_closed(node n)
+bool check_closed(state &new_s)
 {
-    state new_s = n.getState();
-    bool check;
+    bool check = false;
 
     for (vector<node>::iterator it = closed.begin(); it != closed.end(); ++it)
     {
         if(check == true) return true;
         
-        state aux_s = (*it).getState();
+        state aux_s = (*it).get_state();
 
-        if(new_s.getParada() == aux_s.getParada())
+        if(new_s.get_parada() == aux_s.get_parada())
         {
-            for(size_t i = 0; i < new_s.getChildren().size(); ++i)
+            for(size_t i = 0; i < new_s.get_children().size(); ++i)
             {
-                if(new_s.getChildren()[i].getEstado() == aux_s.getChildren()[i].getEstado())
+                if(new_s.get_children()[i].get_estado() == aux_s.get_children()[i].get_estado())
                     check = true;
                 else 
                     return false;
@@ -95,38 +93,43 @@ string check_colegio(string p)
     {
         if(parada != " ") return parada;
 
-        if( (*it).getParada() == p )
-            parada = (*it).getName();
+        if( (*it).get_parada() == p )
+            parada = (*it).get_cole();
         else parada = " ";
     }
 
     return parada;
 }
 
-void subir(node padre)
+void subir(node &_padre)
 {
-    state s = padre.getState();
+    state s = _padre.get_state();
+    vector<string> aux_ant = _padre.get_antecesores();
 
     int control = 0;
 
-    vector<child> aux_c = s.getChildren();
-    string aux_p = s.getParada();
-    int libre = s.getPassengers();
+    vector<child> aux_c = s.get_children();
+    string aux_p = s.get_parada();
+    int libre = s.get_seats();
 
     for (vector<child>::iterator it = aux_c.begin(); it != aux_c.end(); ++it)
     {
-        if( ((*it).getParada() == aux_p) && ((*it).getEstado() == 0) && (libre > 0))
+        string previous = " S: ";
+        if( ((*it).get_parada() == aux_p) && ((*it).get_estado() == 0) && (libre > 0))
         {
-            (*it).setEstado(1);
+            (*it).set_estado(1);
             libre -= 1;
 
             state new_s(aux_p, aux_c, libre);
-            node new_n(&padre, new_s, padre.getCost());
+            previous += (*it).get_colegio();
+            previous += " ";
 
             if(control > 0) open.pop_back();
 
-            if(!check_closed(new_n) && !check_open(new_n))
+            if(!check_closed(new_s) && !check_open(new_s))
             {
+                node new_n(new_s, _padre.get_c(), aux_ant);
+                //padre.setPrevious(previous);
                 ++control;
                 open.push_back(new_n);
             }
@@ -134,32 +137,37 @@ void subir(node padre)
     }
 }
 
-void bajar(node padre)
+void bajar(node &_padre)
 {
-    state s = padre.getState();
+    state s = _padre.get_state();
+    vector<string> aux_ant = _padre.get_antecesores();
 
     int control = 0;
 
-    vector<child> aux_c = s.getChildren();
-    string aux_p = s.getParada();
-    int libre = s.getPassengers();
+    vector<child> aux_c = s.get_children();
+    string aux_p = s.get_parada();
+    int libre = s.get_seats();
 
     for (vector<child>::iterator it = aux_c.begin(); it != aux_c.end(); ++it)
     {
-        if( (((*it).getEstado() == 1) && ((*it).getColegio() == check_colegio(aux_p)) ))
+        string previous = " B: ";
+        if( (((*it).get_estado() == 1) && ((*it).get_colegio() == check_colegio(aux_p)) ))
         {
             ++control;
 
-            (*it).setEstado(2);
+            (*it).set_estado(2);
             libre += 1;
 
             state new_s(aux_p, aux_c, libre);
-            node new_n(&padre, new_s, padre.getCost());
+            previous += (*it).get_colegio();
+            previous += " ";
 
             if(control > 0) open.pop_back();
 
-            if(!check_closed(new_n) && !check_open(new_n))
+            if(!check_closed(new_s) && !check_open(new_s))
             {
+                node new_n(new_s, _padre.get_c(), aux_ant);
+                //padre.setPrevious(previous);
                 ++control;
                 open.push_back(new_n);
             }
@@ -167,10 +175,12 @@ void bajar(node padre)
     }
 }
 
-void mover(node padre)
+void mover(node &_padre)
 {
-    state aux_s = padre.getState();
-    int pos = aux_s.getParada()[1] - 49;
+    state aux_s = _padre.get_state();
+    vector<string> aux_ant = _padre.get_antecesores();
+
+    int pos = aux_s.get_parada()[1] - 49;
     int i = 0;
 
     for (vector<int>::iterator it = conexiones[pos].begin(); it != conexiones[pos].end(); ++it)
@@ -181,103 +191,142 @@ void mover(node padre)
         {
             char word = i+48;
             string p = "P";
-            int cost = (*it) + padre.getCost();
-            state new_s((p+word), aux_s.getChildren(), aux_s.getPassengers());
-            node new_n(&padre, new_s, cost);
+            int cost = (*it) + _padre.get_c();
+            state new_s((p+word), aux_s.get_children(), aux_s.get_seats());
 
-            if(!check_closed(new_n) && !check_open(new_n))
+            if(!check_closed(new_s) && !check_open(new_s))
+            {
+                node new_n(new_s, cost, aux_ant);
+                new_n.set_padre(aux_s.get_parada());
+                //new_n.setPrevious(aux_s.getParada());
                 open.push_back(new_n);
+            }
         }
     }
 }
 
-void sucesores(node padre)
+void sucesores(node &padre)
 {
     mover(padre);
     subir(padre);
     bajar(padre);
 }
 
-void a_star()
+void a_star(node initial_node)
 {
     int j = 0;
-    node parent;
 
     open.push_back(initial_node);
 
-    for(int i = 0; i < 50; ++i)
-    //while (!done(open.back()))
+    cout << "\n-----ITERATIONS-----" << endl;
+    //for(int i = 0; i < 10; ++i)
+    while (!done(open.back()))
     {
-        parent = open.back();
-        //cout << "PATER " << parent.getState().getParada() << endl;
+        node parent = open.back();
+        
         open.pop_back();
-        //cout << "CHECK " << check_closed(parent) << endl;
-        // if(!check_closed(parent))
-        // {
-        //     sucesores(parent);
-        //     closed.push_back(parent);   
-        // }
+
         sucesores(parent);
         closed.push_back(parent);
+
         sort(open.begin(), open.end(), sort_function);
+
         ++j;
+
+        
+        cout << j << endl;
     }
     
-    cout << "\n-----OPEN-----" << endl;
-    for (vector<node>::iterator it = open.begin(); it != open.end(); ++it)
+    // cout << "\n-----OPEN-----" << endl;
+    // for (vector<node>::iterator it = open.begin(); it != open.end(); ++it)
+    // {
+    //     state e = (*it).get_state();
+    //     //node p = (*it).getPadre();
+    //     cout << "NODO " << e.get_parada() << endl;
+    //     //cout << "PADRE " << p.getState().getParada() << endl;
+    //     cout << "G " << (*it).get_c() << endl;
+    //     cout << "COSTE " << (*it).get_f() << endl;
+    //     cout << "NOÑOH ";
+
+    //     for (vector<child>::iterator ch = e.get_children().begin(); ch != e.get_children().end(); ++ch)
+    //     {
+    //         cout << (*ch).get_estado() << " ";
+    //     }
+    //     cout << "\n" << endl;
+
+    // }
+
+    // cout << "\n-----CLOSED-----" << endl;
+    // for (vector<node>::iterator it = closed.begin(); it != closed.end(); ++it)
+    // {
+    //     state e = (*it).get_state();
+    //     //node p = (*it).getPadre();
+    //     cout << "NODO " << e.get_parada() << endl;
+    //     //cout << "PADRE " << p.getState().getParada() << endl;
+    //     cout << "G " << (*it).get_c() << endl;
+    //     cout << "COSTE " << (*it).get_f() << endl;
+    //     cout << "NOÑOH ";
+
+    //     for (vector<child>::iterator ch = e.get_children().begin(); ch != e.get_children().end(); ++ch)
+    //     {
+    //         cout << (*ch).get_estado() << " ";
+    //     }
+    //     cout << "\n" << endl;
+
+    // }
+
+    
+
+    cout << "\nNODO " << open.back().get_state().get_parada() << endl;
+    // // //state papa_state = papa->getState();
+    cout << "PADRE " << open.back().get_padre()  << endl;
+    cout << "COSTE " << open.back().get_c() << endl;
+    cout << "PADRE ";
+    for (vector<string>::iterator ch = open.back().get_antecesores().begin(); ch != open.back().get_antecesores().end(); ++ch)
     {
-        state e = (*it).getState();
-        //node p = (*it).getPadre();
-        cout << "NODO " << e.getParada() << endl;
-        //cout << "PADRE " << p.getState().getParada() << endl;
-        cout << "G " << (*it).getCost() << endl;
-        cout << "COSTE " << (*it).getF() << endl;
-        cout << "NOÑOH ";
-
-        for (vector<child>::iterator ch = e.getChildren().begin(); ch != e.getChildren().end(); ++ch)
-        {
-            cout << (*ch).getEstado() << " ";
-        }
-        cout << "\n" << endl;
-
+        cout << (*ch) << " ";
     }
-
-    cout << "\n-----CLOSED-----" << endl;
-    for (vector<node>::iterator it = closed.begin(); it != closed.end(); ++it)
-    {
-        state e = (*it).getState();
-        //node p = (*it).getPadre();
-        cout << "NODO " << e.getParada() << endl;
-        //cout << "PADRE " << p.getState().getParada() << endl;
-        cout << "G " << (*it).getCost() << endl;
-        cout << "COSTE " << (*it).getF() << endl;
-        cout << "NOÑOH ";
-
-        for (vector<child>::iterator ch = e.getChildren().begin(); ch != e.getChildren().end(); ++ch)
-        {
-            cout << (*ch).getEstado() << " ";
-        }
-        cout << "\n" << endl;
-
-    }
-    
-    cout << "\n-----ITERATIONS-----" << endl;
-    cout << j << endl;
-    
+    cout << endl;
 }
 
 int main()
 {
     mapa map;
-    map.fill_graph();
-    state initial_state(map.getInitial(), map.getChildren(), map.getCapacity());
+    state initial_state(map.get_initial(), map.get_children(), map.get_capacity());
 
-    initial_node.setState(initial_state);
-    initial_node.setCost(0);
+    initial_node.set_state(initial_state);
+    string paco = "END";
+    initial_node.set_padre(paco);
 
-    colegios = map.getColegios();
-    conexiones = map.getConexiones();
-    capacidad = map.getCapacity();
+    colegios = map.get_colegios();
+    conexiones = map.get_conexiones();
+    capacidad = map.get_capacity();
 
-    a_star();
-}
+    a_star(initial_node);
+
+    // bool i = false;
+    // node papa = open.back();
+    // cout << "\nNODO " << papa.getState().getParada() << endl;
+    // cout << "COSTE " << papa.getCost() << endl;
+    // cout << "NOÑOH ";
+    // for (vector<child>::iterator ch = papa.getState().getChildren().begin(); ch != papa.getState().getChildren().end(); ++ch)
+    // {
+    //     cout << (*ch).getEstado() << " ";
+    // }
+    // cout << "\n" << endl;
+
+//     string aux = papa.get_state().get_parada();
+//     cout << aux;
+//     while(!i)
+//     {
+//         cout << " <- " << papa.get_padre();
+//         if(aux == papa.get_padre())
+//             i = true;
+//         else
+//         {
+//             cout << "-";
+//             //papa = papa.get_padre();
+//         }
+//     }
+//     cout << endl;
+  }
