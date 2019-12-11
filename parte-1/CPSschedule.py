@@ -113,35 +113,23 @@ if __name__ == '__main__':
 	# -------------------------------------------------------------------------
 	# print(problem.getSolution())
 
-	solutions = problem.getSolution()
+	solutions = problem.getSolutions()
     
-	# print("#{0} solutions have been found: ".format (len (solutions)/17))
+	print("#{0} solutions have been found: ".format (len (solutions)))
 
-	print("""
-Ciencias Naturales: {0} y {1}
-Ciencias Sociales:  {2} y {3}
-Matematicas: 		{4} y {5}
-Ingles:  			{6} y {7}
-Lengua castellana:  {8} y {9}
-Educacion fisica:   {10}""" .format (solutions['CN1'], solutions['CN2'], solutions['CS1'], solutions['CS2'], 
-			 						 solutions['MA1'], solutions['MA2'], solutions['IN1'], solutions['IN2'],
-									 solutions['LC1'], solutions['LC2'], solutions['EF']))
+# 	print("""
+# Ciencias Naturales: {0} y {1}
+# Ciencias Sociales:  {2} y {3}
+# Matematicas: 		{4} y {5}
+# Ingles:  			{6} y {7}
+# Lengua castellana:  {8} y {9}
+# Educacion fisica:   {10}""" .format (solutions['CN1'], solutions['CN2'], solutions['CS1'], solutions['CS2'], 
+# 			 						 solutions['MA1'], solutions['MA2'], solutions['IN1'], solutions['IN2'],
+# 									 solutions['LC1'], solutions['LC2'], solutions['EF']))
 
-	print("""
-Andrea: {0} y {1}
-Lucia:  {2} y {3}
-Juan: 	{4} y {5}
-""" .format (solutions['AN1'], solutions['AN2'], solutions['LU1'], solutions['LU2'], 
-			 						 solutions['JU1'], solutions['JU2']))
-
-	# print("""
-	# 		  |  L  |  M  |  X  |  J  |
-	# -----------------------------------
-	# |  9 - 10 |  {8}  |  {6}  |  {5}  | {4}  |
-	# -----------------------------------
-	# | 10 - 11 |  {9}  |  {1}  |  {10}  | {2}  |
-	# -----------------------------------
-	# | 11 - 12 |  {7}  |  {3}  |  {3}  |
-	# -----------------------------""".format (solutions, solutions['CN2'], solutions['CS1'], solutions['CS2'], 
-	# 		 						 solutions['MA1'], solutions['MA2'], solutions['IN1'], solutions['IN2'],
-	# 								 solutions['LC1'], solutions['LC2'], solutions['EF']))
+# 	print("""
+# Andrea: {0} y {1}
+# Lucia:  {2} y {3}
+# Juan: 	{4} y {5}
+# """ .format (solutions['AN1'], solutions['AN2'], solutions['LU1'], solutions['LU2'], 
+# 			 						 solutions['JU1'], solutions['JU2']))
