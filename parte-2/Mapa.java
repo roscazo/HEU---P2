@@ -7,6 +7,8 @@ public class Mapa
 	private Vector<Colegio> colegios;
 	private Vector<Child> children;
 	
+	private int[][] warshallC; 
+	
 	private String initial_pos;
 	private int capacity;
 	
@@ -48,12 +50,15 @@ public class Mapa
 				++line_count;
 				line = reader.readLine();
 			}
+			
+			warshallC = new int[getConexiones().size()][getConexiones().size()];
+			floyd_warshall();
 		}
 		catch(IOException e) {
 	    	System.out.println("FileNotFoundException: "+path+ " (No such file or directory)");
 	    	return;
 	    }
-		//print_map();
+
 	}
 	
 	public int num_paradas(String[] str)
@@ -77,7 +82,7 @@ public class Mapa
 		{
 			String part = str[i].replace("\u00A0","").trim();
 			if(!isNumeric(part) && part.equals("--"))
-				row.add(-1);
+				row.add(Integer.MAX_VALUE);
 			if(isNumeric(part))
 				row.add(Integer.parseInt(part));
 		}
@@ -142,6 +147,38 @@ public class Mapa
 		}
 	}
 	
+	/**
+	 * Implementa el algoritmo Floyd-Warshall, el cuï¿½l devuelve el camino mï¿½s corto entre dos paradas
+	 */
+	public void floyd_warshall()
+	{
+		int i,j,k;
+		
+		// Guarda la matriz de conexiones en una nueva matriz 
+		for (i = 0; i < getConexiones().size(); i++)
+			for (j = 0; j < getConexiones().size(); j++)
+				warshallC[i][j] = getConexiones().get(i).get(j);
+		
+		for (k = 0; k < warshallC.length; k++)
+		{
+			if(i==k) continue;
+			for (i = 0; i < warshallC.length; i++)
+			{
+				for (j = 0; j < warshallC.length; j++)
+				{
+					if(j==k) continue;
+					else if(i==j) continue;
+					else
+					{
+						if(warshallC[i][k] != Integer.MAX_VALUE && warshallC[k][j] != Integer.MAX_VALUE)
+							if(warshallC[i][k] + warshallC[k][j] < warshallC[i][j])
+								warshallC[i][j] = warshallC[i][k]+warshallC[k][j];
+					}
+				}
+			}
+		}
+	}
+	
 	public static boolean isNumeric(String cadena) {
 		boolean resultado;
 		try {
@@ -153,32 +190,37 @@ public class Mapa
 		return resultado;
 	}
 	
-	public void print_map()
+	public String print_map()
 	{
-		System.out.println("-----PARADAS-----");
-		for(int i = 0; i < conexiones.size(); i++)
-		{
-			System.out.println("P" + (i+1));
-			for(int j = 0; j < conexiones.get(i).size(); j++)
-			{
-				System.out.println("Conectado con P" + (j+1) + " en " + conexiones.get(i).get(j));
-			}
-		}
+		String output = "------DATOS INICIALES------\n";
 		
-		System.out.println("-----CONEXIONES-----");
-		for(int i = 0; i < colegios.size(); i++)
-		{
-			System.out.println("Colegio " + colegios.get(i).getColegio() + " en " + colegios.get(i).getId());
-		}
+		output += "\tNÃºmero de paradas: " + conexiones.size() + "\n";
 		
-		System.out.println("-----NIÑOS-----");
+		output += "\tParada inicial: " + getInitial_pos() + "\n";
+		
+		output += "\tCapacidad del autobÃºs: " + getCapacity() + "\n";
+		
+		output += "\tColegios: ";
+		for(int i = 0; i < colegios.size()-1; i++)
+			output += colegios.get(i).getColegio() + " en " + colegios.get(i).getId() + ", ";
+		output += colegios.get(colegios.size()-1).getColegio() + " en " + colegios.get(colegios.size()-1).getId() + "\n";
+		
+		output += "\t" + getChildren().size() + " alumnos:\n";
 		for(int i = 0; i < children.size(); i++)
+			output += "\t\tAlumno " + (i+1) + " en " + getChildren().get(i).getId() + " hacia " + getChildren().get(i).getColegio() + "\n";
+
+		return output;
+	}
+	
+	public void print_warshall()
+	{
+		for (int i = 0; i < warshallC.length; i++)
 		{
-			System.out.println("Niño en " + children.get(i).getId() + " hacia " + children.get(i).getColegio());
+			for (int j = 0; j < warshallC.length; j++)
+				System.out.print(warshallC[i][j] + " ");
+			System.out.print("\n");
 		}
-		
-		System.out.println("PARADA INICIAL " + initial_pos);
-		System.out.println("CAPACIDAD " + capacity);
+			
 	}
 	
 	public Vector<Vector<Integer>> getConexiones() { return conexiones; }
@@ -192,10 +234,7 @@ public class Mapa
 	public int getCapacity() { return capacity; }
 	
 	public String getPath() { return path; }
+	
+	public int[][] getFW() { return warshallC; }
 
-
-//	public static void main(String[] args)
-//	{
-//		Mapa map = new Mapa("ejemplos/problema3.prob");
-//	}
 }

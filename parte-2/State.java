@@ -9,13 +9,13 @@ public class State
 	private int g;
 	private int h;
 	
-	public State(String position, Vector<Child> children, int free_seats, int g, String h)
+	public State(String position, Vector<Child> children, int free_seats, int g)
 	{
 		this.setPosition(position);
 		this.setChildren(children);
 		this.setFree_seats(free_seats);
 		this.setG(g);
-		this.setH(heuristica(h));
+//		this.setH(h);
 	}
 	
 	public int getF()
@@ -40,27 +40,6 @@ public class State
 		}
 		else 
 			return false;
-	}
-	
-	public int heuristica(String h)
-	{
-		switch(h)
-		{
-		case "dijkstra":
-			return 0;
-			
-		case "heu_1":
-			int op1 = 2*this.getChildren().size();
-			int op2 = 0;
-			
-			for(Child it : this.getChildren())
-				op2 += it.getEstado();
-			
-			return (op1 - op2);
-			
-		default:
-			return 0;
-		}
 	}
 
 	public String getPosition() {

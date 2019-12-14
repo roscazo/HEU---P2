@@ -1,0 +1,12 @@
+------DATOS INICIALES------
+	Número de paradas: 6
+	Parada inicial: P1
+	Capacidad del autobús: 5
+	Colegios: C1 en P3, C2 en P4
+	4 alumnos:
+		Alumno 1 en P2 hacia C1
+		Alumno 2 en P2 hacia C2
+		Alumno 3 en P5 hacia C1
+		Alumno 4 en P5 hacia C1
+
+P1 -> P2(S: 1 C1, 1 C2) -> P3 -> P4(B: 1 C2) -> P5(S: 2 C1) -> P4 -> P3(B: 3 C1) -> P2 -> P1

@@ -5,6 +5,8 @@ public class Node implements Comparable<Node>
 	private Node parent;
 	private State state;
 	
+	private String trace;
+	
 	/**
 	 * 
 	 * @param parent
@@ -14,6 +16,7 @@ public class Node implements Comparable<Node>
 	{
 		this.setParent(parent);
 		this.setState(state);
+		this.setTrace(null);
 	}
 
 	/**
@@ -41,17 +44,34 @@ public class Node implements Comparable<Node>
 	{
 		Vector<String> buffer = new Vector<>();
 		String pos = this.getState().getPosition();
+		String trace = this.getTrace();
 		
 		if(parent == null)
 		{
-			buffer.add(pos);
-			return buffer;
+			if(trace != null)
+			{
+				buffer.add(pos+trace);
+				return buffer;
+			}
+			else
+			{
+				buffer.add(pos);
+				return buffer;
+			}
 		}
 		else
 		{
 			buffer = parent.getPath();
-			buffer.add(pos);
-			return buffer;
+			if(trace != null)
+			{
+				buffer.add(pos+trace);
+				return buffer;
+			}
+			else
+			{
+				buffer.add(pos);
+				return buffer;
+			}
 		}
 	}
 	
@@ -84,6 +104,10 @@ public class Node implements Comparable<Node>
 	public State getState() { return state; }
 
 	public void setState(State state) { this.state = state; }
+	
+	public String getTrace() { return trace; }
+
+	public void setTrace(String trace) { this.trace = trace; }
 
 	@Override
 	public String toString() {

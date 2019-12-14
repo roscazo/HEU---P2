@@ -9,9 +9,9 @@ public class main{
 				"Try: java main -help\n";
 		String help_string = "Usage: java main <problem> <heuristic>\n"+
 				"\tmaze: el path al archivo que contenga el problema a resolver\n"+
-				"\theuristic: nombre de una de las heurísticas disponibles:\n"+
+				"\theuristic: nombre de una de las heurï¿½sticas disponibles:\n"+
+					"\t\tdefault\n"+
 					"\t\theu_1\n"+
-					"\t\theu_2\n"+
 				"For more information see 346083-362273.pdf.";
 		
 		//Check input

@@ -6,10 +6,6 @@ def notEqual(a, b):
 	if a != b:
 		return True
 
-def equal(a, b):
-	if a == b:
-		return True
-
 def consecutive(a, b):
 	if b == a + 1:
 		return True
@@ -44,15 +40,12 @@ if __name__ == '__main__':
 
 	problem = constraint.Problem()	
 
-	asignaturas = ['CN1','CN2','LC1','LC2','IN1','IN2','EF','MA1','MA2','CS1','CS2']
-	# profesores  = ['LU1','LU2','LU3','LU4','AN1','AN2','AN3','AN4','JU1','JU2','JU3','JU4']
-	profesores = ['LU1','LU2','AN1','AN2','JU1','JU2']
-
-	# VARIABLES:
+	# VARIABLES Y DOMINIOS:
 	# -------------------------------------------------------------------------	
 
 	# Asignaturas:
 	# -------------------------------------------------------------------------
+	asignaturas = ['CN1','CN2','LC1','LC2','IN1','IN2','EF','MA1','MA2','CS1','CS2']
 	# Para todas las materias se deben impartir 2 horas semanales, excepto Educación Física
 	# La duración de cada una de las clases es de 1 hora
 	problem.addVariables(['CN1','CN2','LC1','LC2','IN1','IN2','EF'], range(1,12))
@@ -62,6 +55,8 @@ if __name__ == '__main__':
 	problem.addVariables(['CS1','CS2'], [3, 6, 9, 11])
 	
 	# Profesores:
+	# -------------------------------------------------------------------------
+	profesores = ['LU1','LU2','AN1','AN2','JU1','JU2']
 	# Cada profesor debe impartir 2 materias
 	problem.addVariables(['LU1','LU2','AN1','AN2','JU1','JU2'], ['CN','CS','MA','IN','EF','LC'])
 
@@ -113,7 +108,7 @@ if __name__ == '__main__':
 	# -------------------------------------------------------------------------
 	# print(problem.getSolution())
 
-	solutions = problem.getSolutions()
+	solutions = problem.getSolution()
     
 	print("#{0} solutions have been found: ".format (len (solutions)))
 
