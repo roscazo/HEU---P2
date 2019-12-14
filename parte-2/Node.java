@@ -8,7 +8,7 @@ public class Node implements Comparable<Node>
 	private String trace;
 	
 	/**
-	 * 
+	 * Constructor
 	 * @param parent
 	 * @param state
 	 */
@@ -17,23 +17,6 @@ public class Node implements Comparable<Node>
 		this.setParent(parent);
 		this.setState(state);
 		this.setTrace(null);
-	}
-
-	/**
-	 * 
-	 * @param hyper_node
-	 * @return
-	 */
-	public boolean isAncestor(Node hyper_node)
-	{
-		if(state.is_equal(hyper_node.state)){ return true; }
-		
-		else
-		{
-			if(hyper_node.parent == null) { return false; }
-			
-			else { return isAncestor(hyper_node.parent); }
-		}
 	}
 	
 	/**

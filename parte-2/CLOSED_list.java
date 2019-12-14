@@ -9,6 +9,12 @@ public class CLOSED_list
 		closed_nodes = new TreeSet<Node>();
 	}
 	
+	/**
+	 * Comprueba si el nodo en la lista CLOSED
+	 * 
+	 * @param new_node Nodo a comprobar
+	 * @return True en caso de que este, false en caso contrario
+	 */
 	public boolean contains(Node new_node)
 	{
 		for(Node iterator : closed_nodes)
