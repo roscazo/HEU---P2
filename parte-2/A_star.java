@@ -299,21 +299,25 @@ public class A_star
 	{
 		switch(h)
 		{
-		// Dijkstra
-		case "default":
-			return 0;
-		// Heurística: colegio mas lejano
+		// Heurística: busca 
 		case "heu_1":
 			if(todos_entregados(s))
 				return back_home(s);
 			else
-				//return colegio_lejos(s);
-				return alumnos_cerca(s);
+				return alumnos_lejos(s);
 
 		case "heu_2":
-			return alumnos_cerca(s);
-			//return colegio_lejos(s);
+			int sum = 0;
+			if(todos_entregados(s))
+				return back_home(s);
+			else
+			{
+				for(Child it : s.getChildren())
+					sum += it.getEstado();
 
+				return (2*s.getChildren().size())-sum;
+			}
+		// Dijkstra		
 		default:
 			return 0;
 		}
@@ -389,12 +393,19 @@ public class A_star
 		return check;
 	}
 
+	/**
+	 * Busca si hay algun alumno esperando en alguna parada
+	 * 
+	 * @param s Estado a evaluar
+	 * @return Devuelve true en caso de que haya algún alumno esperando
+	 */
 	public boolean alguien_esperando(State s)
 	{
 		boolean check = true;
-		
+		// Recorre el vector children del estado input
 		for(Child it : s.getChildren())
 		{
+			// Alguien esperando, return true
 			if(it.getEstado() == 0)
 				return true;
 			else
@@ -430,7 +441,7 @@ public class A_star
 	 * @param s Estado al que calcular la heuristica
 	 * @return Devuelve el valor del camino mas corto
 	 */
-	public int colegio_lejos(State s)
+	public int colegio_cerca(State s)
 	{
 		String p = s.getPosition();
 		int value = 0;
@@ -439,14 +450,20 @@ public class A_star
 		for(Colegio it : map.getColegios())
 		{
 			int pos2 = Integer.parseInt(it.getId().substring(it.getId().length()-1)) - 1 ;
-			
+			// Busca el valor menos costoso
 			if(map.getFW()[pos1][pos2] < value)
 				value = map.getFW()[pos1][pos2];
 		}
 		return value;
 	}
 	
-	public int alumnos_cerca(State s)
+	/**
+	 * Busca el coste hasta los alumnos que más lejos estén de la posición inicial
+	 * 
+	 * @param s Estado actual
+	 * @return El coste del camino
+	 */
+	public int alumnos_lejos(State s)
 	{
 		String p = s.getPosition();
 		int value = 0;
@@ -455,19 +472,21 @@ public class A_star
 		for(Child it : s.getChildren())
 		{
 			int pos2 = 0;
-			
+			// Comprueba si hay alumnos esperando
 			if(alguien_esperando(s))
 			{
+				// Busca los alumnos esperando
 				if(it.getEstado() == 0)
 				{
 					pos2 = Integer.parseInt(it.getId().substring(it.getId().length()-1)) - 1;
+					// Devuelve el camino mas costoso
 					if(map.getFW()[pos1][pos2] > value)
 						value = map.getFW()[pos1][pos2];
 				}
 			}
-
+			// En caso contrario, busca el camino al colegio mas cercano
 			else 
-				return colegio_lejos(s);
+				return colegio_cerca(s);
 		}
 		return value;
 	}

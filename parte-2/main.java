@@ -18,7 +18,7 @@ public class main{
 		//Check input
 		if(args.length == 2)
 		{
-			if(!args[1].equals("default") && !args[1].equals("heu_1") && !args[1].equals("heu_2")) 
+			if(!args[1].equals("default") && !args[1].equals("heu_1") && !args[1].equals("heu_2") && !args[1].equals("heu_3")) 
 			{
 				System.out.println(invalidArgs);
 				return;
