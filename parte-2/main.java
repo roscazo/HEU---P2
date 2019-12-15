@@ -12,12 +12,13 @@ public class main{
 				"\theuristic: nombre de una de las heur�sticas disponibles:\n"+
 					"\t\tdefault\n"+
 					"\t\theu_1\n"+
+					"\t\theu_2\n"+
 				"For more information see 346083-362273.pdf.";
 		
 		//Check input
 		if(args.length == 2)
 		{
-			if(!args[1].equals("default") && !args[1].equals("heu_1")) 
+			if(!args[1].equals("default") && !args[1].equals("heu_1") && !args[1].equals("heu_2")) 
 			{
 				System.out.println(invalidArgs);
 				return;

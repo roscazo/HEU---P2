@@ -307,8 +307,13 @@ public class A_star
 			if(todos_entregados(s))
 				return back_home(s);
 			else
-				return colegio_lejos(s);
-			
+				//return colegio_lejos(s);
+				return alumnos_cerca(s);
+
+		case "heu_2":
+			return alumnos_cerca(s);
+			//return colegio_lejos(s);
+
 		default:
 			return 0;
 		}
@@ -326,7 +331,7 @@ public class A_star
 		State aux = node.getState();
 		boolean check = false;
 		
-		// Si la posición es la misma que la posici�n inicial
+		// Si la posición es la misma que la posicion inicial
 		if(aux.getPosition().equals(map.getInitial_pos()))
 		{
 			// Loop del vector children
@@ -383,6 +388,20 @@ public class A_star
 		}
 		return check;
 	}
+
+	public boolean alguien_esperando(State s)
+	{
+		boolean check = true;
+		
+		for(Child it : s.getChildren())
+		{
+			if(it.getEstado() == 0)
+				return true;
+			else
+				check = false;
+		}
+		return check;
+	}
 	
 	/**
 	 * ---- Funcion auxiliar para la heuristica ----
@@ -415,20 +434,43 @@ public class A_star
 	{
 		String p = s.getPosition();
 		int value = 0;
-		int pos1 = Integer.parseInt(p.substring(1,2)) - 1;
+		int pos1 = Integer.parseInt(p.substring(p.length()-1)) - 1;
 		
 		for(Colegio it : map.getColegios())
 		{
-			int pos2 = Integer.parseInt(it.getId().substring(1,2)) - 1 ;
+			int pos2 = Integer.parseInt(it.getId().substring(it.getId().length()-1)) - 1 ;
 			
-			if(map.getFW()[pos1][pos2] > value)
+			if(map.getFW()[pos1][pos2] < value)
 				value = map.getFW()[pos1][pos2];
 		}
 		return value;
 	}
 	
+	public int alumnos_cerca(State s)
+	{
+		String p = s.getPosition();
+		int value = 0;
+		int pos1 = Integer.parseInt(p.substring(p.length()-1)) - 1;
 
-	
+		for(Child it : s.getChildren())
+		{
+			int pos2 = 0;
+			
+			if(alguien_esperando(s))
+			{
+				if(it.getEstado() == 0)
+				{
+					pos2 = Integer.parseInt(it.getId().substring(it.getId().length()-1)) - 1;
+					if(map.getFW()[pos1][pos2] > value)
+						value = map.getFW()[pos1][pos2];
+				}
+			}
+
+			else 
+				return colegio_lejos(s);
+		}
+		return value;
+	}
 	/**
 	 * Funcion auxiliar para imprimir el fichero output
 	 * 

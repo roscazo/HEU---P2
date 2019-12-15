@@ -7,4 +7,4 @@
 		Alumno 1 en P2 hacia C1
 		Alumno 2 en P2 hacia C2
 
-P1 -> P2(S: 1 C1, 1 C2) -> P3 -> P4(B: 1 C2) -> P3(B: 1 C1) -> P2 -> P1
+P1 -> P2(S: 1 C1, 1 C2) -> P3(B: 1 C1) -> P4(B: 1 C2) -> P3 -> P2 -> P1

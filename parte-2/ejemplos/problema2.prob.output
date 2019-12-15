@@ -9,4 +9,4 @@
 		Alumno 3 en P5 hacia C1
 		Alumno 4 en P5 hacia C1
 
-P1 -> P2(S: 1 C1, 1 C2) -> P3 -> P4(B: 1 C2) -> P5(S: 2 C1) -> P4 -> P3(B: 3 C1) -> P2 -> P1
+P1 -> P2(S: 1 C1, 1 C2) -> P1 -> P5(S: 2 C1) -> P4(B: 1 C2) -> P3(B: 3 C1) -> P2 -> P1

@@ -38,7 +38,7 @@ def lateJU(a, b):
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
 
-	problem = constraint.Problem()	
+	problem = constraint.Problem ()	
 
 	# VARIABLES Y DOMINIOS:
 	# -------------------------------------------------------------------------	
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 			if i == j: continue
 			else: problem.addConstraint(notEqual, (i, j))	
 
-	# Lucía solo se encargará de Ciencias Sociales, si yrea se encarga de Educación Física
+	# Lucía solo se encargará de Ciencias Sociales, si Andrea se encarga de Educación Física
 	problem.addConstraint(csyef, ('LU1', 'AN1'))
 	problem.addConstraint(csyef, ('LU1', 'AN2'))
 	problem.addConstraint(csyef, ('LU2', 'AN1'))
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 	# -------------------------------------------------------------------------
 	# print(problem.getSolution())
 
-	solutions = problem.getSolution()
+	solutions = problem.getSolution ()
     
 	print("#{0} solutions have been found: ".format (len (solutions)))
 
