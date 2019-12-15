@@ -98,10 +98,14 @@ public class Mapa
 			String part = str[i].replace("\u00A0","").trim();
 			
 			if(part.contains(":"))
-				c = part.substring(0,2);
+				c = part.substring(0,part.length()-1);
 			else
 			{
-				p = part.substring(0,2);
+				if(part.contains(";"))
+					p = part.substring(0,part.length()-1);
+				else 
+					p = part.substring(0,part.length());
+
 				Colegio aux = new Colegio(p, c);
 				colegios.add(aux);
 			}
@@ -121,12 +125,16 @@ public class Mapa
 			if(isNumeric(part))
 				num_children = Integer.parseInt(part);
 			else if(part.contains(":"))
-				p = part.substring(0,2);
+				p = part.substring(0,part.length()-1);
 			else
 			{
 				for(int j = 0; j < num_children; j++)
 				{
-					c = part.substring(0,2);
+					if(part.contains(",") || part.contains(";"))
+						c = part.substring(0,part.length()-1);
+					else 
+						c = part.substring(0,part.length());
+
 					Child aux = new Child(p, c, 0);
 					children.add(aux);
 				}
@@ -194,11 +202,11 @@ public class Mapa
 	{
 		String output = "------DATOS INICIALES------\n";
 		
-		output += "\tNúmero de paradas: " + conexiones.size() + "\n";
+		output += "\tNumero de paradas: " + conexiones.size() + "\n";
 		
 		output += "\tParada inicial: " + getInitial_pos() + "\n";
 		
-		output += "\tCapacidad del autobús: " + getCapacity() + "\n";
+		output += "\tCapacidad del autobus: " + getCapacity() + "\n";
 		
 		output += "\tColegios: ";
 		for(int i = 0; i < colegios.size()-1; i++)

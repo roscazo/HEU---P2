@@ -54,11 +54,13 @@ public class A_star
 		// Lleva la cuenta del numero de expansiones
 		int num_expansiones = 0;
 		//Nodo auxiliar para expandir
-		Node to_expand;
+		Node to_expand = null;
 		
 		// Loop de busqueda
 		do
 		{
+			// Checkea si la lista open esta vacia
+			if(open_list.open_nodes.isEmpty()) break;
 			// Coge el primer elemento en la lista abierta
 			to_expand = open_list.open_nodes.remove(0);
 			// Inserta el nodo en CLOSED
@@ -85,8 +87,6 @@ public class A_star
 					}
 				}
 			}
-			// Checkea si la lista open esta vacia
-			if(open_list.open_nodes.isEmpty()) continue;
 		// El loop continua hasta que se encuentra una solucion
 		} while(!exito);
 		// Toma el tiempo final de ejecucion
@@ -426,8 +426,8 @@ public class A_star
 		String p = s.getPosition();
 		int value = 0;
 		
-		int pos1 = Integer.parseInt(p.substring(1,2)) - 1;
-		int pos2 = Integer.parseInt(map.getInitial_pos().substring(1,2)) - 1 ;
+		int pos1 = Integer.parseInt(p.substring(1,p.length())) - 1;
+		int pos2 = Integer.parseInt(map.getInitial_pos().substring(1,map.getInitial_pos().length())) - 1 ;
 			
 		value = map.getFW()[pos1][pos2];
 		
@@ -445,11 +445,11 @@ public class A_star
 	{
 		String p = s.getPosition();
 		int value = 0;
-		int pos1 = Integer.parseInt(p.substring(p.length()-1)) - 1;
+		int pos1 = Integer.parseInt(p.substring(1,p.length())) - 1;
 		
 		for(Colegio it : map.getColegios())
 		{
-			int pos2 = Integer.parseInt(it.getId().substring(it.getId().length()-1)) - 1 ;
+			int pos2 = Integer.parseInt(it.getId().substring(1,it.getId().length())) - 1 ;
 			// Busca el valor menos costoso
 			if(map.getFW()[pos1][pos2] < value)
 				value = map.getFW()[pos1][pos2];
@@ -467,7 +467,7 @@ public class A_star
 	{
 		String p = s.getPosition();
 		int value = 0;
-		int pos1 = Integer.parseInt(p.substring(p.length()-1)) - 1;
+		int pos1 = Integer.parseInt(p.substring(1,p.length())) - 1;
 
 		for(Child it : s.getChildren())
 		{
@@ -478,7 +478,7 @@ public class A_star
 				// Busca los alumnos esperando
 				if(it.getEstado() == 0)
 				{
-					pos2 = Integer.parseInt(it.getId().substring(it.getId().length()-1)) - 1;
+					pos2 = Integer.parseInt(it.getId().substring(1,it.getId().length())) - 1;
 					// Devuelve el camino mas costoso
 					if(map.getFW()[pos1][pos2] > value)
 						value = map.getFW()[pos1][pos2];

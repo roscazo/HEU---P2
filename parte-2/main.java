@@ -7,18 +7,18 @@ public class main{
 	{
 		String invalidArgs = "Invalid Arguments\n"+
 				"Try: java main -help\n";
-		String help_string = "Usage: java main <problem> <heuristic>\n"+
-				"\tmaze: el path al archivo que contenga el problema a resolver\n"+
-				"\theuristic: nombre de una de las heur�sticas disponibles:\n"+
-					"\t\tdefault\n"+
-					"\t\theu_1\n"+
-					"\t\theu_2\n"+
-				"For more information see 346083-362273.pdf.";
+		String help_string = "Uso: java main <problem> <heuristic>\n"+
+				"\tproblem: el path al archivo que contenga el problema a resolver\n"+
+				"\theuristic: nombre de una de las heuristicas disponibles:\n"+
+					"\t\tdefault - llama a la heuristica 0\n"+
+					"\t\theu_1 - primera heuristica usando las distancias a los alumnos mas cercano\n"+
+					"\t\theu_2 - segunda heuristica usando los estados de los alumnos\n"+
+				"Para mas informacion acerca de las heuristicas consultar la memoria.";
 		
 		//Check input
 		if(args.length == 2)
 		{
-			if(!args[1].equals("default") && !args[1].equals("heu_1") && !args[1].equals("heu_2") && !args[1].equals("heu_3")) 
+			if(!args[1].equals("default") && !args[1].equals("heu_1") && !args[1].equals("heu_2")) 
 			{
 				System.out.println(invalidArgs);
 				return;

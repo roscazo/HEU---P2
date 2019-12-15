@@ -1,7 +1,7 @@
 ------DATOS INICIALES------
-	Número de paradas: 8
+	Numero de paradas: 8
 	Parada inicial: P8
-	Capacidad del autobús: 5
+	Capacidad del autobus: 5
 	Colegios: C1 en P6, C2 en P3, C3 en P8
 	7 alumnos:
 		Alumno 1 en P2 hacia C2
